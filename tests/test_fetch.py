@@ -1,7 +1,7 @@
 from pathlib import Path
 import time
 
-from ankglish.sources.fetch import fetch_mwld
+from ankglish.sources.fetch import fetch_audio_many, fetch_mwld
 
 
 class FakeClient:
@@ -34,3 +34,26 @@ def test_fetch_preserves_input_order_with_parallel_workers(tmp_path: Path) -> No
 
     assert list(entries) == ["one", "two", "three"]
     assert failures == {}
+
+def test_fetch_audio_many_dedupes_and_reports_progress(tmp_path: Path) -> None:
+    for name in ("a000001.wav", "b000001.wav"):
+        (tmp_path / name).write_bytes(b"RIFF")
+    base = "https://media.merriam-webster.com/soundc11"
+    urls = [
+        f"{base}/a/a000001.wav",
+        f"{base}/a/a000001.wav",  # duplicate collapses
+        f"{base}/b/b000001.wav",
+        "",  # skipped
+    ]
+    events: list[tuple[int, int, str]] = []
+
+    results = fetch_audio_many(
+        urls,
+        cache_dir=tmp_path,
+        progress=lambda *event: events.append(event),
+    )
+
+    assert set(results) == {urls[0], urls[2]}
+    assert results[urls[0]].name == "a000001.wav"
+    assert len(events) == 2  # two distinct non-empty URLs
+    assert events[-1][1] == 2  # total reflects deduped count

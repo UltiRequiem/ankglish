@@ -40,8 +40,24 @@ def _build_parser() -> argparse.ArgumentParser:
     rebuild.add_argument("--cache-dir", type=Path, default=Path("data/cache/mwld"))
     rebuild.add_argument("--max-rank", type=int)
     rebuild.add_argument("--refresh", action="store_true")
+    rebuild.add_argument(
+        "--refresh-audio",
+        action="store_true",
+        help="Re-download cached pronunciation audio (URLs are stable; rarely needed).",
+    )
     rebuild.add_argument("--offline", action="store_true")
     rebuild.add_argument("--concurrency", type=int, help="Maximum parallel dictionary requests.")
+    rebuild.add_argument(
+        "--audio-concurrency",
+        type=int,
+        help="Maximum parallel audio downloads (default: dictionary concurrency).",
+    )
+    rebuild.add_argument(
+        "--media",
+        choices=("embed", "link", "both"),
+        default="embed",
+        help="embed: package audio files; link: remote <audio> only; both: emit each.",
+    )
 
     return parser
 
@@ -85,6 +101,9 @@ def main(argv: list[str] | None = None) -> int:
                 refresh=args.refresh,
                 offline=args.offline,
                 max_concurrency=args.concurrency,
+                media=args.media,
+                refresh_audio=args.refresh_audio,
+                audio_concurrency=args.audio_concurrency,
             )
         except (OSError, ValueError, KeyError, RuntimeError) as error:
             print(f"Build failed: {error}")

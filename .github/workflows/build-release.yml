@@ -46,7 +46,12 @@ jobs:
         env:
           MAX_RANK: ${{ inputs.max_rank || '60000' }}
           CONCURRENCY: ${{ inputs.concurrency || '8' }}
-        run: ankglish rebuild --refresh --max-rank "$MAX_RANK" --concurrency "$CONCURRENCY" --output-dir dist
+        run: >-
+          ankglish rebuild --refresh --media both
+          --max-rank "$MAX_RANK"
+          --concurrency "$CONCURRENCY"
+          --audio-concurrency 16
+          --output-dir dist
       - name: Upload validated artifacts
         uses: actions/upload-artifact@v4
         with:

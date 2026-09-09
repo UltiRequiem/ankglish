@@ -96,3 +96,40 @@ def fetch_audio(url: str, *, cache_dir: Path, refresh: bool = False) -> Path | N
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(response.content)
     return path
+
+
+def fetch_audio_many(
+    urls: list[str],
+    *,
+    cache_dir: Path,
+    refresh: bool = False,
+    max_concurrency: int = 8,
+    progress: Callable[[int, int, str], None] | None = None,
+) -> dict[str, Path]:
+    """Download distinct audio URLs in parallel; return {url: cached_path} for hits."""
+    if max_concurrency < 1:
+        raise ValueError("max_concurrency must be at least 1")
+    unique = [url for url in dict.fromkeys(urls) if url]
+    total = len(unique)
+    results: dict[str, Path] = {}
+    if not total:
+        return results
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    completed = 0
+    with ThreadPoolExecutor(max_workers=max_concurrency) as executor:
+        future_to_url = {
+            executor.submit(fetch_audio, url, cache_dir=cache_dir, refresh=refresh): url
+            for url in unique
+        }
+        for future in as_completed(future_to_url):
+            url = future_to_url[future]
+            completed += 1
+            try:
+                path = future.result()
+            except Exception:  # per-URL failures belong in the manifest, not a crash
+                path = None
+            if path is not None:
+                results[url] = path
+            if progress:
+                progress(completed, total, url)
+    return results

@@ -7,14 +7,12 @@ import json
 from pathlib import Path
 import time
 
-import httpx
-
 from .config import load_config
 from .exporters.apkg import export_apkg
 from .exporters.notices import build_attribution, deck_description
 from .pipeline.normalize import normalize_entries
 from .pipeline.quality import quality_filter
-from .sources.fetch import fetch_audio, fetch_mwld
+from .sources.fetch import fetch_audio_many, fetch_mwld
 from .sources.frequency import english_words
 from .sources.mwld import MWLDClient
 from .validation import validate_tsv
@@ -67,7 +65,12 @@ def rebuild_live(
     refresh: bool = False,
     offline: bool = False,
     max_concurrency: int | None = None,
+    media: str = "embed",
+    refresh_audio: bool = False,
+    audio_concurrency: int | None = None,
 ) -> dict[str, object]:
+    if media not in {"embed", "link", "both"}:
+        raise ValueError("media must be one of: embed, link, both")
     config = load_config(config_path)
     rank_limit = max_rank or config.frequency_max_rank
     frequency = english_words(rank_limit)
@@ -111,20 +114,54 @@ def rebuild_live(
     ranks = {item.word: item.rank for item in frequency}
     if offline and failures:
         raise ValueError(f"offline cache is missing {len(failures)} required words")
+
+    stage_started = time.monotonic()
     full_notes, normalization_rejections = normalize_entries(entries, frequency_ranks=ranks)
     full_notes, quality_rejections = quality_filter(full_notes)
+    print(
+        f"Normalized {len(full_notes)} notes in {time.monotonic() - stage_started:.1f}s",
+        flush=True,
+    )
+
     media_dir = cache_dir / "audio"
     media_files: list[Path] = []
-    for note in full_notes:
-        audio_url = note.fields.get("AudioURL", "")
-        try:
-            audio_path = fetch_audio(audio_url, cache_dir=media_dir, refresh=refresh)
-        except (OSError, ValueError, RuntimeError, httpx.HTTPError):
-            audio_path = None
-        if audio_path is not None:
-            note.fields["Audio"] = f"[sound:{audio_path.name}]"
-            note.fields["AudioPath"] = str(audio_path)
-            media_files.append(audio_path)
+    if media in {"embed", "both"}:
+        audio_started = time.monotonic()
+
+        def audio_report(done: int, total: int, _url: str) -> None:
+            if done == 1 or done % 100 == 0 or done == total:
+                elapsed = time.monotonic() - audio_started
+                rate = done / elapsed if elapsed else 0
+                remaining = (total - done) / rate if rate else 0
+                print(
+                    f"Audio: {done}/{total} ({done / total:.1%}) "
+                    f"rate={rate:.1f}/s eta={remaining / 60:.1f}m",
+                    flush=True,
+                )
+
+        audio_paths = fetch_audio_many(
+            [note.fields.get("AudioURL", "") for note in full_notes],
+            cache_dir=media_dir,
+            refresh=refresh_audio,
+            max_concurrency=(
+                audio_concurrency
+                or max_concurrency
+                or config.dictionary_max_concurrency
+            ),
+            progress=audio_report,
+        )
+        for note in full_notes:
+            audio_path = audio_paths.get(note.fields.get("AudioURL", ""))
+            if audio_path is not None:
+                note.fields["Audio"] = f"[sound:{audio_path.name}]"
+                note.fields["AudioPath"] = str(audio_path)
+                media_files.append(audio_path)
+        print(
+            f"Audio: {len(media_files)} files in "
+            f"{time.monotonic() - audio_started:.1f}s",
+            flush=True,
+        )
+
     standard_notes: list = []
     seen_words: set[str] = set()
     for note in full_notes:
@@ -145,18 +182,29 @@ def rebuild_live(
         "standard_count": len(standard_notes),
         "rejections": {**normalization_rejections, **quality_rejections},
         "audio_count": len(media_files),
+        "audio_url_count": sum(
+            1 for note in full_notes if note.fields.get("AudioURL", "")
+        ),
+        "media": media,
         "offline": offline,
     }
     description = deck_description(manifest)
-    export_apkg(
-        full_notes, output_dir / "ankglish-full.apkg", variant="full", description=description
-    )
-    export_apkg(
-        standard_notes,
-        output_dir / "ankglish-standard.apkg",
-        variant="standard",
-        description=description,
-    )
+
+    if media in {"embed", "both"}:
+        _export_pair(full_notes, standard_notes, output_dir, description, suffix="")
+    if media in {"link", "both"}:
+        for note in full_notes:
+            audio_url = note.fields.get("AudioURL", "")
+            note.fields["Audio"] = (
+                f'<audio controls preload="none" src="{audio_url}"></audio>'
+                if audio_url
+                else ""
+            )
+            note.fields.pop("AudioPath", None)
+        _export_pair(
+            full_notes, standard_notes, output_dir, description, suffix="-online"
+        )
+
     (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
     )
@@ -169,3 +217,22 @@ def rebuild_live(
         flush=True,
     )
     return manifest
+
+
+def _export_pair(
+    full_notes: list,
+    standard_notes: list,
+    output_dir: Path,
+    description: str,
+    *,
+    suffix: str,
+) -> None:
+    for variant, notes in (("full", full_notes), ("standard", standard_notes)):
+        started = time.monotonic()
+        output_path = output_dir / f"ankglish-{variant}{suffix}.apkg"
+        export_apkg(notes, output_path, variant=variant, description=description)
+        print(
+            f"Wrote {output_path.name} ({len(notes)} notes) in "
+            f"{time.monotonic() - started:.1f}s",
+            flush=True,
+        )
