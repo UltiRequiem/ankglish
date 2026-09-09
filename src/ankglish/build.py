@@ -7,6 +7,8 @@ import json
 from pathlib import Path
 import time
 
+import httpx
+
 from .config import load_config
 from .exporters.apkg import export_apkg
 from .pipeline.normalize import normalize_entries
@@ -116,7 +118,7 @@ def rebuild_live(
         audio_url = note.fields.get("AudioURL", "")
         try:
             audio_path = fetch_audio(audio_url, cache_dir=media_dir, refresh=refresh)
-        except (OSError, ValueError, RuntimeError):
+        except (OSError, ValueError, RuntimeError, httpx.HTTPError):
             audio_path = None
         if audio_path is not None:
             note.fields["Audio"] = f"[sound:{audio_path.name}]"

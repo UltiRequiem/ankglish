@@ -71,6 +71,14 @@ def fetch_mwld(
     return entries, failures
 
 
+_AUDIO_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+        "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    )
+}
+
+
 def fetch_audio(url: str, *, cache_dir: Path, refresh: bool = False) -> Path | None:
     if not url:
         return None
@@ -78,8 +86,11 @@ def fetch_audio(url: str, *, cache_dir: Path, refresh: bool = False) -> Path | N
     path = cache_dir / filename
     if path.is_file() and not refresh:
         return path
-    response = httpx.get(url, timeout=15.0)
-    response.raise_for_status()
+    try:
+        response = httpx.get(url, timeout=15.0, headers=_AUDIO_HEADERS)
+        response.raise_for_status()
+    except httpx.HTTPError:
+        return None
     if not response.headers.get("content-type", "").startswith("audio/"):
         return None
     path.parent.mkdir(parents=True, exist_ok=True)
