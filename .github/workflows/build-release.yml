@@ -47,9 +47,7 @@ jobs:
           path: dist/
 
   publish:
-    if: >-
-      (github.event_name == 'schedule' || inputs.publish == true) &&
-      vars.ANKGLISH_RELEASE_READY == 'true'
+    if: github.event_name == 'schedule' || inputs.publish == true
     needs: build
     runs-on: ubuntu-latest
     permissions:
