@@ -4,8 +4,16 @@
   <div class="ankglish-pronunciation">{{ Pronunciation }}</div>
   <section class="ankglish-definition">{{ Definition }}</section>
   <section class="ankglish-examples">{{ Examples }}</section>
-  {{#Translation}}<section class="ankglish-translation"><span>Translation</span>{{ Translation }}</section>{{/Translation}}
-  <a class="ankglish-dictionary" href="https://www.merriam-webster.com/dictionary/{{ Headword }}">Open dictionary</a>
+  {{#Translation}}
+  <section class="ankglish-translation">
+    <span>Translation</span>{{ Translation }}
+  </section>
+  {{/Translation}}
+  <a
+    class="ankglish-dictionary"
+    href="https://www.merriam-webster.com/dictionary/{{ Headword }}"
+    >Open dictionary</a
+  >
 </main>
 <script>
 {

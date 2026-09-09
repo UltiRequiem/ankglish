@@ -14,8 +14,10 @@ generated deck snapshot is checked in.
   default. Monthly dependency refreshes update this source explicitly. The
   package is an input dependency, not a claim that the old snapshot's frequency
   labels were authoritative.
-- Merriam-Webster Learner's Dictionary: intended primary dictionary/audio
-  provider, subject to API entitlement, terms, and redistribution permission.
+- Merriam-Webster Learner's Dictionary: primary dictionary provider, accessed
+  with the local/Actions `MWLD_LEARNER_API_KEY`; live access has been smoke
+  tested, while production volume and monthly limits remain provider-policy
+  constraints.
 - Kaikki/Wiktionary: intended fallback provider, subject to a pinned dump or
   endpoint revision and per-asset attribution/license records.
 - Translation: disabled by default. Only an explicitly supplied local file is

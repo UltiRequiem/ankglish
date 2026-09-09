@@ -10,6 +10,11 @@ on:
         required: true
         default: false
         type: boolean
+      max_rank:
+        description: Maximum word frequency rank to fetch
+        required: true
+        default: "60000"
+        type: string
 
 permissions:
   contents: read
@@ -31,8 +36,10 @@ jobs:
         run: pip install .[dev]
       - name: Run tests
         run: pytest -q
-      - name: Build offline validation outputs
-        run: ankglish build --output-dir dist
+      - name: Build refreshed full and standard decks
+        env:
+          MAX_RANK: ${{ inputs.max_rank || '60000' }}
+        run: ankglish rebuild --refresh --max-rank "$MAX_RANK" --output-dir dist
       - name: Upload validated artifacts
         uses: actions/upload-artifact@v4
         with:

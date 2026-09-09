@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from . import __version__
-from .build import build_tsv
+from .build import build_tsv, rebuild_live
 from .validation import validate_tsv
 
 
@@ -33,6 +33,14 @@ def _build_parser() -> argparse.ArgumentParser:
     build.add_argument("--config", type=Path, default=Path("config/default.toml"))
     build.add_argument("--output-dir", type=Path, default=Path("dist"))
     build.add_argument("--variant", choices=("full", "standard", "both"), default="both")
+
+    rebuild = subparsers.add_parser("rebuild", help="Fetch, normalize, quality-check, and export APKG.")
+    rebuild.add_argument("--config", type=Path, default=Path("config/default.toml"))
+    rebuild.add_argument("--output-dir", type=Path, default=Path("dist"))
+    rebuild.add_argument("--cache-dir", type=Path, default=Path("data/cache/mwld"))
+    rebuild.add_argument("--max-rank", type=int)
+    rebuild.add_argument("--refresh", action="store_true")
+    rebuild.add_argument("--offline", action="store_true")
 
     return parser
 
@@ -62,6 +70,27 @@ def main(argv: list[str] | None = None) -> int:
         for output in outputs:
             print(f"Wrote {output}")
         print(f"Wrote {args.output_dir / 'manifest.json'}")
+        return 0
+    if args.command == "rebuild":
+        if args.refresh and args.offline:
+            print("Build failed: --refresh and --offline are mutually exclusive")
+            return 1
+        try:
+            manifest = rebuild_live(
+                output_dir=args.output_dir,
+                config_path=args.config,
+                cache_dir=args.cache_dir,
+                max_rank=args.max_rank,
+                refresh=args.refresh,
+                offline=args.offline,
+            )
+        except (OSError, ValueError, KeyError, RuntimeError) as error:
+            print(f"Build failed: {error}")
+            return 1
+        print(
+            f"Built full={manifest['full_count']} standard={manifest['standard_count']} "
+            f"from fetched={manifest['fetched_count']} failed={manifest['failed_words']}"
+        )
         return 0
 
     _build_parser().print_help()

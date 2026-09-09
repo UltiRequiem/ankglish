@@ -21,6 +21,7 @@ class BuildConfig:
     translations_enabled: bool
     package_headword_audio: bool
     example_tts_enabled: bool
+    frequency_max_rank: int
     learner_api_key: str | None
     elementary_api_key: str | None
 
@@ -56,6 +57,7 @@ def load_config(path: Path, *, dotenv_path: Path | None = None) -> BuildConfig:
         translations_enabled=translations["enabled"],
         package_headword_audio=audio["package_headword_audio"],
         example_tts_enabled=audio["example_tts_enabled"],
+        frequency_max_rank=frequency["max_rank"],
         learner_api_key=secret(learner_env),
         elementary_api_key=secret(elementary_env),
     )

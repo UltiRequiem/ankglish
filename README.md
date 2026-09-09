@@ -85,6 +85,13 @@ ankglish
  └── standard
 ```
 
+With rotated MWLD credentials in `.env`, a live smoke rebuild is:
+
+```sh
+uv run ankglish rebuild --refresh --max-rank 100
+```
+
+The production configuration uses `--max-rank 60000`. It fetches source data
 Frequency inputs and release subdeck policy are refreshed monthly.
 
 ---
@@ -180,9 +187,9 @@ scope and reuse conditions.
   [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), with
   attribution to English Wiktionary contributors and Kaikki.org. The data has
   been filtered, reorganized, and formatted for this deck. Reuse must preserve
-  attribution, indicate changes, link the license, and follow its ShareAlike
-  requirements.
-
+  The repository has the canonical models, frequency adapter, MWLD client,
+  cache-backed fetch, normalization, quality filtering, live APKG exporter, and
+  packaged card UI. The GitHub workflow fails closed unless the repository
 - **Wiktionary/Wikimedia audio and other media:** Each file retains the
   file-specific license and attribution requirements shown on its original
   source page. These files are not automatically covered by CC BY-SA 4.0 or CC0;

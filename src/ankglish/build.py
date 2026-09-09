@@ -7,6 +7,12 @@ import json
 from pathlib import Path
 
 from .config import load_config
+from .exporters.apkg import export_apkg
+from .pipeline.normalize import normalize_entries
+from .pipeline.quality import quality_filter
+from .sources.fetch import fetch_mwld
+from .sources.frequency import english_words
+from .sources.mwld import MWLDClient
 from .validation import validate_tsv
 
 
@@ -46,3 +52,63 @@ def build_tsv(
         newline="\n",
     )
     return outputs
+
+
+def rebuild_live(
+    *,
+    output_dir: Path,
+    config_path: Path,
+    cache_dir: Path,
+    max_rank: int | None = None,
+    refresh: bool = False,
+    offline: bool = False,
+) -> dict[str, object]:
+    config = load_config(config_path)
+    rank_limit = max_rank or config.frequency_max_rank
+    frequency = english_words(rank_limit)
+    words = [item.word for item in frequency]
+    client = MWLDClient(config.learner_api_key)
+    if offline:
+        entries, failures = fetch_mwld(
+            words,
+            client=client,
+            cache_dir=cache_dir,
+            refresh=False,
+            allow_network=False,
+            delay_seconds=0,
+        )
+    else:
+        entries, failures = fetch_mwld(
+            words, client=client, cache_dir=cache_dir, refresh=refresh
+        )
+    ranks = {item.word: item.rank for item in frequency}
+    if offline and failures:
+        raise ValueError(f"offline cache is missing {len(failures)} required words")
+    full_notes, normalization_rejections = normalize_entries(entries, frequency_ranks=ranks)
+    full_notes, quality_rejections = quality_filter(full_notes)
+    standard_notes: list = []
+    seen_words: set[str] = set()
+    for note in full_notes:
+        if note.headword.casefold() not in seen_words:
+            standard_notes.append(note)
+            seen_words.add(note.headword.casefold())
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    export_apkg(full_notes, output_dir / "ankglish-full.apkg", variant="full")
+    export_apkg(standard_notes, output_dir / "ankglish-standard.apkg", variant="standard")
+    manifest = {
+        "project": config.project_name,
+        "source": {"frequency": "wordfreq", "dictionary": "mwld"},
+        "max_rank": rank_limit,
+        "candidate_count": len(words),
+        "fetched_count": len(entries),
+        "failed_words": len(failures),
+        "full_count": len(full_notes),
+        "standard_count": len(standard_notes),
+        "rejections": {**normalization_rejections, **quality_rejections},
+        "offline": offline,
+    }
+    (output_dir / "manifest.json").write_text(
+        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    return manifest
