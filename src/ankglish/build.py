@@ -11,6 +11,7 @@ import httpx
 
 from .config import load_config
 from .exporters.apkg import export_apkg
+from .exporters.notices import build_attribution, deck_description
 from .pipeline.normalize import normalize_entries
 from .pipeline.quality import quality_filter
 from .sources.fetch import fetch_audio, fetch_mwld
@@ -132,14 +133,13 @@ def rebuild_live(
             seen_words.add(note.headword.casefold())
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    export_apkg(full_notes, output_dir / "ankglish-full.apkg", variant="full")
-    export_apkg(standard_notes, output_dir / "ankglish-standard.apkg", variant="standard")
     manifest = {
         "project": config.project_name,
         "source": {"frequency": "wordfreq", "dictionary": "mwld"},
         "max_rank": rank_limit,
         "candidate_count": len(words),
         "fetched_count": len(entries),
+        "wiktionary_count": 0,
         "failed_words": len(failures),
         "full_count": len(full_notes),
         "standard_count": len(standard_notes),
@@ -147,8 +147,21 @@ def rebuild_live(
         "audio_count": len(media_files),
         "offline": offline,
     }
+    description = deck_description(manifest)
+    export_apkg(
+        full_notes, output_dir / "ankglish-full.apkg", variant="full", description=description
+    )
+    export_apkg(
+        standard_notes,
+        output_dir / "ankglish-standard.apkg",
+        variant="standard",
+        description=description,
+    )
     (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    (output_dir / "ATTRIBUTION.md").write_text(
+        build_attribution(manifest), encoding="utf-8"
     )
     print(
         f"Completed source fetch: candidates={len(words)} fetched={len(entries)} "

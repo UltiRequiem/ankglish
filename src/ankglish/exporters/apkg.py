@@ -20,7 +20,9 @@ def _template(name: str) -> str:
     return template_path.read_text(encoding="utf-8")
 
 
-def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> None:
+def export_apkg(
+    notes: list[DeckNote], output_path: Path, *, variant: str, description: str = ""
+) -> None:
     if variant not in DECK_IDS:
         raise ValueError(f"unsupported variant: {variant}")
 
@@ -47,7 +49,7 @@ def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> No
         ],
         css=_template("styles.css"),
     )
-    deck = genanki.Deck(DECK_IDS[variant], f"ankglish::{variant}")
+    deck = genanki.Deck(DECK_IDS[variant], f"ankglish::{variant}", description=description)
     media_files: list[str] = []
     for deck_note in notes:
         note = genanki.Note(

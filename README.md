@@ -17,12 +17,12 @@ ankglish is designed for learners who want more than a word list:
 
 Each card can contain:
 
-- headword and part of speech;
-- IPA pronunciation and a replayable audio button;
-- a clear definition;
-- several example sentences with readable formatting;
-- an optional translation area, hidden unless translations are enabled;
-- a link to look up the word in a dictionary.
+- headword and part of speech
+- IPA pronunciation and a replayable audio button
+- a clear definition
+- several example sentences with readable formatting
+- an optional translation area, hidden unless translations are enabled
+- a link to look up the word in a dictionary
 
 The deck is built for offline review. Example-sentence TTS is not required, and
 translations are not included by default.
