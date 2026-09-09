@@ -1,9 +1,9 @@
 <main class="ankglish-card ankglish-front">
-  <div class="ankglish-kicker">ANKGLISH / PRONUNCIATION</div>
-  <h1 class="ankglish-headword">{{ Headword }}</h1>
-  <div class="ankglish-pronunciation">{{ Pronunciation }}</div>
-  {{#Audio}}
-  <div class="ankglish-audio">{{ Audio }}</div>
-  {{/Audio}}
-  <div class="ankglish-example">{{ Example }}</div>
+  <header class="ankglish-header">
+    <h1 class="ankglish-headword">{{ Headword }}</h1>
+    {{#PartOfSpeech}}<span class="ankglish-pos">{{ PartOfSpeech }}</span>{{/PartOfSpeech}}
+  </header>
+  <div class="ankglish-pronunciation">/{{ Pronunciation }}/ {{ Audio }}</div>
+  <div class="ankglish-rule"></div>
+  {{#Example}}<div class="ankglish-example"><span class="ankglish-bullet">•</span>{{ Example }}</div>{{/Example}}
 </main>

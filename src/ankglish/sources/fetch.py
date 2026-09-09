@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import time
 
+import httpx
+
 from .mwld import MWLDClient
 
 
@@ -43,3 +45,19 @@ def fetch_mwld(
         except Exception as error:  # provider failures belong in the report
             failures[word] = type(error).__name__
     return entries, failures
+
+
+def fetch_audio(url: str, *, cache_dir: Path, refresh: bool = False) -> Path | None:
+    if not url:
+        return None
+    filename = url.rsplit("/", 1)[-1]
+    path = cache_dir / filename
+    if path.is_file() and not refresh:
+        return path
+    response = httpx.get(url, timeout=15.0)
+    response.raise_for_status()
+    if not response.headers.get("content-type", "").startswith("audio/"):
+        return None
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(response.content)
+    return path

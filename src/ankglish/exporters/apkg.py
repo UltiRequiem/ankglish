@@ -29,6 +29,7 @@ def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> No
         "ankglish pronunciation",
         fields=[
             {"name": "Headword"},
+            {"name": "PartOfSpeech"},
             {"name": "Pronunciation"},
             {"name": "Definition"},
             {"name": "Examples"},
@@ -47,11 +48,13 @@ def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> No
         css=_template("styles.css"),
     )
     deck = genanki.Deck(DECK_IDS[variant], f"ankglish::{variant}")
+    media_files: list[str] = []
     for deck_note in notes:
         note = genanki.Note(
             model=model,
             fields=[
                 deck_note.fields.get("Headword", deck_note.headword),
+                deck_note.fields.get("PartOfSpeech", deck_note.part_of_speech),
                 deck_note.fields.get("Pronunciation", ""),
                 deck_note.fields.get("Definition", deck_note.sense.definition),
                 deck_note.fields.get("Examples", "<br>".join(deck_note.sense.examples)),
@@ -63,5 +66,10 @@ def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> No
         )
         note.guid = deck_note.note_id
         deck.add_note(note)
+        audio_path = deck_note.fields.get("AudioPath")
+        if audio_path:
+            media_files.append(audio_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    genanki.Package(deck).write_to_file(str(output_path))
+    package = genanki.Package(deck)
+    package.media_files = media_files
+    package.write_to_file(str(output_path))

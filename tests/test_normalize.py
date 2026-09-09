@@ -7,9 +7,16 @@ def test_normalize_mwld_short_definitions() -> None:
             "hello": [
                 {
                     "meta": {"id": "hello:1"},
-                    "hwi": {"hw": "hello", "prs": [{"ipa": "həˈloʊ"}]},
+                    "hwi": {
+                        "hw": "hello",
+                        "prs": [{"ipa": "həˈloʊ", "sound": {"audio": "hello001"}}],
+                    },
                     "fl": "interjection",
                     "shortdef": ["used as a greeting"],
+                    "def": [[[
+                        "sense",
+                        {"dt": [["vis", [{"t": "Hello there."}]]]},
+                    ]]],
                 }
             ]
         },
@@ -18,4 +25,6 @@ def test_normalize_mwld_short_definitions() -> None:
 
     assert len(notes) == 1
     assert notes[0].sense.definition == "used as a greeting"
+    assert notes[0].sense.examples == ("Hello there.",)
+    assert notes[0].fields["AudioURL"].endswith("/h/hello001.wav")
     assert rejected == {"no_entry": 0, "no_definition": 0, "no_pronunciation": 0}

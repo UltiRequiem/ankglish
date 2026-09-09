@@ -1,7 +1,9 @@
 <main class="ankglish-card ankglish-back">
-  <div class="ankglish-kicker">ANKGLISH / DEFINITION</div>
-  <h1 class="ankglish-headword">{{ Headword }}</h1>
-  <div class="ankglish-pronunciation">{{ Pronunciation }}</div>
+  <header class="ankglish-header">
+    <h1 class="ankglish-headword">{{ Headword }}</h1>
+    {{#PartOfSpeech}}<span class="ankglish-pos">{{ PartOfSpeech }}</span>{{/PartOfSpeech}}
+  </header>
+  <div class="ankglish-pronunciation">/{{ Pronunciation }}/ {{ Audio }}</div>
   <section class="ankglish-definition">{{ Definition }}</section>
   <section class="ankglish-examples">{{ Examples }}</section>
   {{#Translation}}
@@ -11,9 +13,7 @@
   {{/Translation}}
   <a
     class="ankglish-dictionary"
-    href="https://www.merriam-webster.com/dictionary/{{ Headword }}"
-    >Open dictionary</a
-  >
+    href="https://www.merriam-webster.com/dictionary/{{ Headword }}">Open dictionary</a>
 </main>
 <script>
 {

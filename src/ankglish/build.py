@@ -10,7 +10,7 @@ from .config import load_config
 from .exporters.apkg import export_apkg
 from .pipeline.normalize import normalize_entries
 from .pipeline.quality import quality_filter
-from .sources.fetch import fetch_mwld
+from .sources.fetch import fetch_audio, fetch_mwld
 from .sources.frequency import english_words
 from .sources.mwld import MWLDClient
 from .validation import validate_tsv
@@ -86,6 +86,18 @@ def rebuild_live(
         raise ValueError(f"offline cache is missing {len(failures)} required words")
     full_notes, normalization_rejections = normalize_entries(entries, frequency_ranks=ranks)
     full_notes, quality_rejections = quality_filter(full_notes)
+    media_dir = cache_dir / "audio"
+    media_files: list[Path] = []
+    for note in full_notes:
+        audio_url = note.fields.get("AudioURL", "")
+        try:
+            audio_path = fetch_audio(audio_url, cache_dir=media_dir, refresh=refresh)
+        except (OSError, ValueError, RuntimeError):
+            audio_path = None
+        if audio_path is not None:
+            note.fields["Audio"] = f"[sound:{audio_path.name}]"
+            note.fields["AudioPath"] = str(audio_path)
+            media_files.append(audio_path)
     standard_notes: list = []
     seen_words: set[str] = set()
     for note in full_notes:
@@ -106,6 +118,7 @@ def rebuild_live(
         "full_count": len(full_notes),
         "standard_count": len(standard_notes),
         "rejections": {**normalization_rejections, **quality_rejections},
+        "audio_count": len(media_files),
         "offline": offline,
     }
     (output_dir / "manifest.json").write_text(
