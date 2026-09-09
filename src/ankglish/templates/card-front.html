@@ -1,9 +1,14 @@
 <main class="ankglish-card ankglish-front">
   <header class="ankglish-header">
     <h1 class="ankglish-headword">{{ Headword }}</h1>
-    {{#PartOfSpeech}}<span class="ankglish-pos">{{ PartOfSpeech }}</span>{{/PartOfSpeech}}
+    {{#PartOfSpeech}}<span class="ankglish-pos">{{ PartOfSpeech }}</span
+    >{{/PartOfSpeech}}
   </header>
   <div class="ankglish-pronunciation">/{{ Pronunciation }}/ {{ Audio }}</div>
   <div class="ankglish-rule"></div>
-  {{#Example}}<div class="ankglish-example"><span class="ankglish-bullet">•</span>{{ Example }}</div>{{/Example}}
+  {{#Example}}
+  <div class="ankglish-example">
+    <span class="ankglish-bullet">•</span>{{ Example }}
+  </div>
+  {{/Example}}
 </main>

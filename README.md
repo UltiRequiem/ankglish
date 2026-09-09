@@ -1,7 +1,7 @@
 # ankglish
 
-Build a stronger English vocabulary through pronunciation, definitions, and
-real example sentences in Anki.
+Build a stronger English vocabulary through pronunciation, definitions, and real
+example sentences in Anki.
 
 ankglish is designed for learners who want more than a word list:
 
@@ -62,5 +62,3 @@ Frequency ranking uses the `wordfreq` dataset. Definitions, pronunciation
 information, and audio primarily come from Merriam-Webster's Learner's
 Dictionary, with Wiktionary/Kaikki used where permitted as a fallback. See
 [SOURCES.md](SOURCES.md) and [LICENSE](LICENSE) for attribution and reuse terms.
-
-ankglish is maintained by Eliaz Bobadilla.
