@@ -13,6 +13,13 @@ MODEL_ID = 1_701_001
 DECK_IDS = {"full": 1_701_101, "standard": 1_701_102}
 
 
+def _template(name: str) -> str:
+    source_path = Path(__file__).parents[3] / "templates" / name
+    package_path = Path(__file__).parents[1] / "templates" / name
+    template_path = source_path if source_path.is_file() else package_path
+    return template_path.read_text(encoding="utf-8")
+
+
 def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> None:
     if variant not in DECK_IDS:
         raise ValueError(f"unsupported variant: {variant}")
@@ -26,15 +33,18 @@ def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> No
             {"name": "Definition"},
             {"name": "Examples"},
             {"name": "Translation"},
+            {"name": "Example"},
+            {"name": "Audio"},
+            {"name": "CardScript"},
         ],
         templates=[
             {
                 "name": "Recognition",
-                "qfmt": "<div class='headword'>{{Headword}}</div><div>{{Pronunciation}}</div>",
-                "afmt": "{{FrontSide}}<hr><div>{{Definition}}</div><div>{{Examples}}</div><div>{{Translation}}</div>",
+                "qfmt": _template("card-front.html"),
+                "afmt": _template("card-back.html"),
             }
         ],
-        css=".card { font-family: sans-serif; text-align: center; } .headword { font-size: 2em; }",
+        css=_template("styles.css"),
     )
     deck = genanki.Deck(DECK_IDS[variant], f"ankglish::{variant}")
     for deck_note in notes:
@@ -46,6 +56,9 @@ def export_apkg(notes: list[DeckNote], output_path: Path, *, variant: str) -> No
                 deck_note.fields.get("Definition", deck_note.sense.definition),
                 deck_note.fields.get("Examples", "<br>".join(deck_note.sense.examples)),
                 deck_note.fields.get("Translation", ""),
+                deck_note.fields.get("Example", deck_note.sense.examples[0] if deck_note.sense.examples else ""),
+                deck_note.fields.get("Audio", ""),
+                _template("card.js"),
             ],
         )
         note.guid = deck_note.note_id

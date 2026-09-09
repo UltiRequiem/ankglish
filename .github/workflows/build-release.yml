@@ -8,7 +8,7 @@ on:
       publish:
         description: Publish a GitHub release after validation
         required: true
-        default: true
+        default: false
         type: boolean
 
 permissions:
@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      MWLD_LEARNER_API_KEY: ${{ secrets.MWLD_LEARNER_API_KEY }}
+      MWLD_ELEMENTARY_API_KEY: ${{ secrets.MWLD_ELEMENTARY_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,7 +31,7 @@ jobs:
         run: pip install .[dev]
       - name: Run tests
         run: pytest -q
-      - name: Build offline fixture outputs
+      - name: Build offline validation outputs
         run: ankglish build --output-dir dist
       - name: Upload validated artifacts
         uses: actions/upload-artifact@v4
@@ -37,7 +40,9 @@ jobs:
           path: dist/
 
   publish:
-    if: github.event_name == 'schedule' || inputs.publish == true
+    if: >-
+      (github.event_name == 'schedule' || inputs.publish == true) &&
+      vars.ANKGLISH_RELEASE_READY == 'true'
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -53,4 +58,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="v$(date -u +%Y.%m)"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists; refusing to overwrite it."
+            exit 1
+          fi
           gh release create "$tag" dist/* --generate-notes --title "ankglish $tag"

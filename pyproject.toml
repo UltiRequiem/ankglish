@@ -25,6 +25,7 @@ ankglish = "ankglish.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ankglish"]
+artifacts = ["templates"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

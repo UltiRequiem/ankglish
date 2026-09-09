@@ -1,0 +1,16 @@
+<main class="ankglish-card ankglish-back">
+  <div class="ankglish-kicker">ANKGLISH / DEFINITION</div>
+  <h1 class="ankglish-headword">{{ Headword }}</h1>
+  <div class="ankglish-pronunciation">{{ Pronunciation }}</div>
+  <section class="ankglish-definition">{{ Definition }}</section>
+  <section class="ankglish-examples">{{ Examples }}</section>
+  {{#Translation}}<section class="ankglish-translation"><span>Translation</span>{{ Translation }}</section>{{/Translation}}
+  <a class="ankglish-dictionary" href="https://www.merriam-webster.com/dictionary/{{ Headword }}">Open dictionary</a>
+</main>
+<script>
+{
+  {
+    CardScript;
+  }
+}
+</script>

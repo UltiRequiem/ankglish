@@ -1,0 +1,102 @@
+:root {
+  --ink: #1d2733;
+  --muted: #687582;
+  --paper: #f7f3ea;
+  --accent: #d85c3f;
+  --line: #d9d0c2;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
+}
+
+.card {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  margin: 0;
+  min-height: 100vh;
+}
+
+.ankglish-card {
+  margin: 0 auto;
+  max-width: 42rem;
+  padding: 12vh 9vw 10vh;
+  text-align: left;
+}
+
+.ankglish-kicker {
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.ankglish-headword {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 10vw, 5.6rem);
+  font-weight: 400;
+  line-height: 0.98;
+  margin: 1.2rem 0 0.7rem;
+}
+
+.ankglish-pronunciation {
+  color: var(--muted);
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+.ankglish-example,
+.ankglish-examples {
+  border-left: 3px solid var(--accent);
+  color: #394653;
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  line-height: 1.65;
+  padding-left: 1.25rem;
+}
+
+.ankglish-definition {
+  border-top: 1px solid var(--line);
+  font-size: 1.2rem;
+  line-height: 1.6;
+  padding-top: 1.5rem;
+}
+
+.ankglish-examples {
+  margin-top: 2rem;
+}
+.ankglish-translation {
+  border-top: 1px solid var(--line);
+  margin-top: 2rem;
+  padding-top: 1rem;
+}
+.ankglish-translation span {
+  color: var(--accent);
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.ankglish-translation-toggle {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  margin-top: 1.5rem;
+  padding: 0.6rem 0.8rem;
+}
+.ankglish-dictionary {
+  color: var(--accent);
+  display: inline-block;
+  margin-top: 2rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .card {
+    --ink: #f5efe5;
+    --muted: #b8b0a4;
+    --paper: #202a31;
+    --line: #46515a;
+  }
+}

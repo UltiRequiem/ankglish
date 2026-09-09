@@ -41,6 +41,11 @@ def load_config(path: Path, *, dotenv_path: Path | None = None) -> BuildConfig:
     credentials = data.get("credentials", {})
     learner_env = credentials.get("learner_env", "MWLD_LEARNER_API_KEY")
     elementary_env = credentials.get("elementary_env", "MWLD_ELEMENTARY_API_KEY")
+
+    def secret(name: str) -> str | None:
+        value = os.getenv(name)
+        return value if value else None
+
     return BuildConfig(
         project_name=project["name"],
         schema=project["schema"],
@@ -51,6 +56,6 @@ def load_config(path: Path, *, dotenv_path: Path | None = None) -> BuildConfig:
         translations_enabled=translations["enabled"],
         package_headword_audio=audio["package_headword_audio"],
         example_tts_enabled=audio["example_tts_enabled"],
-        learner_api_key=os.getenv(learner_env),
-        elementary_api_key=os.getenv(elementary_env),
+        learner_api_key=secret(learner_env),
+        elementary_api_key=secret(elementary_env),
     )

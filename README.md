@@ -10,11 +10,12 @@ pronunciation and vocabulary Anki decks. Frequency ranking uses the pinned
 `wordfreq` package and is refreshed monthly with the dictionary and fallback
 sources.
 
-<div align="center">
-
-[![AnkiWeb - Alt](https://img.shields.io/badge/AnkiWeb-Alt-2e6ce6?labelColor=0b3d91&style=for-the-badge&logo=anki&logoColor=white)](https://ankiweb.net/shared/info/365554322)
-
-</div>
+Unlike the retired snapshot, `ankglish` separates source fetching, normalized
+records, quality decisions, and export. The end-user artifact is an offline Anki
+package: headword audio is packaged when permitted, translations are optional,
+and example-sentence TTS is not required for review. The card UI is made from
+versioned HTML, CSS, and JavaScript templates, so visual changes do not change
+note identity.
 
 ---
 
@@ -44,9 +45,9 @@ sources.
 
 ## 🔖 Card Features
 
-- **Clean & Focused Design**
-
-  ![Card Preview](https://pub-90b0b2afa26447b8b824c3d05d8e274f.r2.dev/uPic/20260319vgLPzn.png)
+- **Clean & Focused Design**: Packaged HTML and CSS templates provide a
+  responsive, light/dark-compatible review surface without a remote asset
+  dependency.
 
 - **Audio Pronunciations**
   - Official pronunciations provided directly from Merriam-Webster.
@@ -114,14 +115,40 @@ checks the small offline fixture:
 uv run ankglish validate
 ```
 
-See [SOURCES.md](SOURCES.md) for the current source inventory and unresolved
-provider decisions. Release builds will document pinned inputs, cache policy,
-quality reports, and import instructions here.
+See [SOURCES.md](SOURCES.md) for the current source inventory and provider
+decisions. Release builds document pinned inputs, cache policy, quality reports,
+and import instructions in their manifest and notice files.
+
+### Development status
+
+The repository currently has the canonical models, frequency adapter, MWLD
+client, validation, deterministic fixture build, APKG exporter, and packaged
+card UI. The full monthly fetch/normalize/quality pipeline is intentionally not
+released yet; the GitHub workflow fails closed unless the repository variable
+`ANKGLISH_RELEASE_READY=true` is enabled after that pipeline is verified. This
+prevents a fixture from being presented as the real deck.
 
 For local source access, copy `.env.example` to `.env` and set the two MWLD
 variables. `.env` is ignored and keys are never accepted in configuration files,
 logs, manifests, or command-line arguments. Revoke any key that has been shared
 outside the Merriam-Webster account and create a replacement before fetching.
+
+For GitHub Actions, rotate the exposed keys first, then run these commands from
+the repository root with the new values entered directly into your terminal:
+
+```sh
+gh secret set MWLD_LEARNER_API_KEY
+gh secret set MWLD_ELEMENTARY_API_KEY
+```
+
+The commands intentionally prompt without placing values in shell history.
+
+After the pipeline is verified, enable the guarded release flow with:
+
+```sh
+gh variable set ANKGLISH_RELEASE_READY --repo UltiRequiem/ankglish --body true
+gh workflow run build-release.yml --repo UltiRequiem/ankglish -f publish=false
+```
 
 - Download and install [Anki](https://apps.ankiweb.net/).
 
@@ -182,12 +209,8 @@ Special thanks to:
 - [Kaikki.org](https://kaikki.org/) - Wiktionary data extract used for
   supplementary IPA and audio
 
-- `@KarasawaKoko` - for providing the TTS audio server.
-
-- [Ecattea/COCA-English-Anki-Deck](https://github.com/Ecattea/COCA-English-Anki-Deck) -
-  for structural and workflow inspiration.
-
-- `@mefengl` - For supplementing missing IPA and audio.
+- The project uses Merriam-Webster and Kaikki/Wiktionary source metadata as
+  documented in [SOURCES.md](SOURCES.md).
 
 ---
 
