@@ -41,6 +41,7 @@ def _build_parser() -> argparse.ArgumentParser:
     rebuild.add_argument("--max-rank", type=int)
     rebuild.add_argument("--refresh", action="store_true")
     rebuild.add_argument("--offline", action="store_true")
+    rebuild.add_argument("--concurrency", type=int, help="Maximum parallel dictionary requests.")
 
     return parser
 
@@ -83,6 +84,7 @@ def main(argv: list[str] | None = None) -> int:
                 max_rank=args.max_rank,
                 refresh=args.refresh,
                 offline=args.offline,
+                max_concurrency=args.concurrency,
             )
         except (OSError, ValueError, KeyError, RuntimeError) as error:
             print(f"Build failed: {error}")

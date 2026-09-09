@@ -15,6 +15,11 @@ on:
         required: true
         default: "60000"
         type: string
+      concurrency:
+        description: Maximum parallel dictionary requests
+        required: true
+        default: "8"
+        type: string
 
 permissions:
   contents: read
@@ -40,7 +45,8 @@ jobs:
       - name: Build refreshed full and standard decks
         env:
           MAX_RANK: ${{ inputs.max_rank || '60000' }}
-        run: ankglish rebuild --refresh --max-rank "$MAX_RANK" --output-dir dist
+          CONCURRENCY: ${{ inputs.concurrency || '8' }}
+        run: ankglish rebuild --refresh --max-rank "$MAX_RANK" --concurrency "$CONCURRENCY" --output-dir dist
       - name: Upload validated artifacts
         uses: actions/upload-artifact@v4
         with:

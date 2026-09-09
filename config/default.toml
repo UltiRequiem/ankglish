@@ -11,6 +11,7 @@ max_rank = 60000
 [sources.dictionary]
 provider = "merriam-webster-learner"
 fallback = "kaikki-wiktionary"
+max_concurrency = 8
 
 [translations]
 enabled = false

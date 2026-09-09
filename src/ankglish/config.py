@@ -18,6 +18,7 @@ class BuildConfig:
     frequency_version: str
     dictionary_provider: str
     dictionary_fallback: str
+    dictionary_max_concurrency: int
     translations_enabled: bool
     package_headword_audio: bool
     example_tts_enabled: bool
@@ -54,6 +55,7 @@ def load_config(path: Path, *, dotenv_path: Path | None = None) -> BuildConfig:
         frequency_version=frequency["version"],
         dictionary_provider=dictionary["provider"],
         dictionary_fallback=dictionary["fallback"],
+        dictionary_max_concurrency=dictionary.get("max_concurrency", 8),
         translations_enabled=translations["enabled"],
         package_headword_audio=audio["package_headword_audio"],
         example_tts_enabled=audio["example_tts_enabled"],

@@ -63,6 +63,7 @@ def rebuild_live(
     max_rank: int | None = None,
     refresh: bool = False,
     offline: bool = False,
+    max_concurrency: int | None = None,
 ) -> dict[str, object]:
     config = load_config(config_path)
     rank_limit = max_rank or config.frequency_max_rank
@@ -92,11 +93,17 @@ def rebuild_live(
             refresh=False,
             allow_network=False,
             delay_seconds=0,
+            max_concurrency=max_concurrency or config.dictionary_max_concurrency,
             progress=report,
         )
     else:
         entries, failures = fetch_mwld(
-            words, client=client, cache_dir=cache_dir, refresh=refresh, progress=report
+            words,
+            client=client,
+            cache_dir=cache_dir,
+            refresh=refresh,
+            max_concurrency=max_concurrency or config.dictionary_max_concurrency,
+            progress=report,
         )
     ranks = {item.word: item.rank for item in frequency}
     if offline and failures:
