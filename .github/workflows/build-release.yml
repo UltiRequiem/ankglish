@@ -27,6 +27,7 @@ jobs:
     env:
       MWLD_LEARNER_API_KEY: ${{ secrets.MWLD_LEARNER_API_KEY }}
       MWLD_ELEMENTARY_API_KEY: ${{ secrets.MWLD_ELEMENTARY_API_KEY }}
+      PYTHONUNBUFFERED: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

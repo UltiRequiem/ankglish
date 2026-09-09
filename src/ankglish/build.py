@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import time
 
 from .config import load_config
 from .exporters.apkg import export_apkg
@@ -68,6 +69,21 @@ def rebuild_live(
     frequency = english_words(rank_limit)
     words = [item.word for item in frequency]
     client = MWLDClient(config.learner_api_key)
+
+    started_at = time.monotonic()
+
+    def report(index: int, total: int, word: str, source: str) -> None:
+        if index == 1 or index % 100 == 0 or index == total or source.startswith("failed"):
+            elapsed = time.monotonic() - started_at
+            rate = index / elapsed if elapsed else 0
+            remaining = (total - index) / rate if rate else 0
+            print(
+                f"Progress: {index}/{total} ({index / total:.1%}) "
+                f"word={word!r} source={source} "
+                f"rate={rate:.1f}/s eta={remaining / 60:.1f}m",
+                flush=True,
+            )
+
     if offline:
         entries, failures = fetch_mwld(
             words,
@@ -76,10 +92,11 @@ def rebuild_live(
             refresh=False,
             allow_network=False,
             delay_seconds=0,
+            progress=report,
         )
     else:
         entries, failures = fetch_mwld(
-            words, client=client, cache_dir=cache_dir, refresh=refresh
+            words, client=client, cache_dir=cache_dir, refresh=refresh, progress=report
         )
     ranks = {item.word: item.rank for item in frequency}
     if offline and failures:
@@ -123,5 +140,10 @@ def rebuild_live(
     }
     (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    print(
+        f"Completed source fetch: candidates={len(words)} fetched={len(entries)} "
+        f"failed={len(failures)}",
+        flush=True,
     )
     return manifest
