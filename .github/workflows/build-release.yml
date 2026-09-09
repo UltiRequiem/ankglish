@@ -1,0 +1,56 @@
+name: Monthly ankglish release
+
+on:
+  schedule:
+    - cron: "17 3 1 * *"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish a GitHub release after validation
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install project
+        run: pip install .[dev]
+      - name: Run tests
+        run: pytest -q
+      - name: Build offline fixture outputs
+        run: ankglish build --output-dir dist
+      - name: Upload validated artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ankglish-build
+          path: dist/
+
+  publish:
+    if: github.event_name == 'schedule' || inputs.publish == true
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ankglish-build
+          path: dist
+      - name: Create monthly release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(date -u +%Y.%m)"
+          gh release create "$tag" dist/* --generate-notes --title "ankglish $tag"

@@ -11,3 +11,6 @@ requirements.txt
 /dist/
 .venv/
 .pytest_cache/
+.env
+.env.*
+!.env.example

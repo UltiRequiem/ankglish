@@ -6,9 +6,9 @@ The former generated deck snapshot has been removed. New releases will be
 created only from pinned inputs and the reproducible build pipeline.
 
 This project is being rebuilt as a reproducible Python pipeline for English
-pronunciation and vocabulary Anki decks. The exact frequency list and source
-versions are still unresolved; the legacy `60k` label must not be read as a
-verified frequency source.
+pronunciation and vocabulary Anki decks. Frequency ranking uses the pinned
+`wordfreq` package and is refreshed monthly with the dictionary and fallback
+sources.
 
 <div align="center">
 
@@ -20,22 +20,22 @@ verified frequency source.
 
 ## 📌 Overview
 
-- **Vocabulary**: determined by a pinned frequency source once selected.
+- **Vocabulary**: English words ranked by the pinned `wordfreq` release, with a
+  configurable default maximum rank of 60,000.
 
 - **Dictionary & Audio**:
   [Merriam-Webster's Learner's Dictionary](https://dictionaryapi.com/) (with
   native audio pronunciations)
-
   - Supplementary: [Wiktionary (via Kaikki.org)](https://kaikki.org/) used to
     fill gaps.
 
 - **Card Structure**: Fully atomic—each card corresponds to exactly one
   definition.
 
-- **Total Cards**: \~66,000
+- **Total Cards**: determined by the monthly source snapshot and quality gates.
 
-- **Organization**: Words divided into 20 frequency-based sub-decks, from most
-  frequent (01k) to least frequent (60k).
+- **Organization**: Separate `full` and `standard` variants, with frequency
+  subdecks generated from the configured rank ranges.
 
 - **Exclusions**: Words or definitions not available in Merriam-Webster's
   Learner's Dictionary have been omitted to ensure accuracy and consistency.
@@ -49,7 +49,6 @@ verified frequency source.
   ![Card Preview](https://pub-90b0b2afa26447b8b824c3d05d8e274f.r2.dev/uPic/20260319vgLPzn.png)
 
 - **Audio Pronunciations**
-
   - Official pronunciations provided directly from Merriam-Webster.
 
   - Missing audio files have been filled using recordings from Wiktionary
@@ -62,7 +61,8 @@ verified frequency source.
 
 - **Example Sentence TTS**
 
-  Click the ▶️ icon to hear example sentences synthesized via online TTS.
+  Disabled by default. Reviews remain usable offline with packaged headword
+  audio.
 
 - **Random Front Example**
 
@@ -84,8 +84,7 @@ ankglish
  └── standard
 ```
 
-The frequency source and release subdeck policy will be pinned before the
-first production build.
+Frequency inputs and release subdeck policy are refreshed monthly.
 
 ---
 
@@ -119,14 +118,19 @@ See [SOURCES.md](SOURCES.md) for the current source inventory and unresolved
 provider decisions. Release builds will document pinned inputs, cache policy,
 quality reports, and import instructions here.
 
+For local source access, copy `.env.example` to `.env` and set the two MWLD
+variables. `.env` is ignored and keys are never accepted in configuration files,
+logs, manifests, or command-line arguments. Revoke any key that has been shared
+outside the Merriam-Webster account and create a replacement before fetching.
+
 - Download and install [Anki](https://apps.ankiweb.net/).
 
 - Import the deck `.apkg` file.
 
 - Start reviewing from the highest frequency sub-deck for maximum efficiency.
 
-- If you prefer translations in languages other than Simplified Chinese, you can
-  edit the `ExampleTR*` fields accordingly.
+- Translations are absent unless a local translation file is explicitly enabled
+  during a build.
 
 ---
 
@@ -137,11 +141,12 @@ single license applies to the whole project. See the full [LICENSE](LICENSE) for
 scope and reuse conditions.
 
 - **Original materials by Eliaz Bobadilla:** To the extent that Eliaz Bobadilla
-  owns the relevant rights, original documentation, translations, selection and organization, card
-  design, templates, code, and other original contributions are dedicated to the
-  public domain under
+  owns the relevant rights, original documentation, translations, selection and
+  organization, card design, templates, code, and other original contributions
+  are dedicated to the public domain under
   [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). This
-  does not include third-party material or rights that Eliaz Bobadilla does not own.
+  does not include third-party material or rights that Eliaz Bobadilla does not
+  own.
 
 - **Wiktionary text and Kaikki.org structured data:** Derived text and data are
   redistributed under

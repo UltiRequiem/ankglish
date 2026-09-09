@@ -3,8 +3,10 @@ name = "ankglish"
 schema = "deck-note-v1"
 
 [sources.frequency]
-provider = "unresolved"
-version = "unresolved"
+provider = "wordfreq"
+version = "pinned-in-lockfile"
+language = "en"
+max_rank = 60000
 
 [sources.dictionary]
 provider = "merriam-webster-learner"
@@ -16,3 +18,7 @@ enabled = false
 [audio]
 package_headword_audio = true
 example_tts_enabled = false
+
+[credentials]
+learner_env = "MWLD_LEARNER_API_KEY"
+elementary_env = "MWLD_ELEMENTARY_API_KEY"

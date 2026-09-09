@@ -21,9 +21,9 @@ rebuild must be able to:
 
 The previous generated snapshot has been removed. The README documents
 Merriam-Webster Learner's Dictionary (MWLD) and Kaikki/Wiktionary as candidate
-sources, but the authoritative frequency source, provider cache, templates,
-and release generator still need to be established. No legacy generated data
-is a build input.
+sources, but the authoritative frequency source, provider cache, templates, and
+release generator still need to be established. No legacy generated data is a
+build input.
 
 ## 2. Decisions to make before implementation
 
