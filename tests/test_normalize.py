@@ -26,5 +26,6 @@ def test_normalize_mwld_short_definitions() -> None:
     assert len(notes) == 1
     assert notes[0].sense.definition == "used as a greeting"
     assert notes[0].sense.examples == ("Hello there.",)
+    assert "ankglish-example-item" in notes[0].fields["Examples"]
     assert notes[0].fields["AudioURL"].endswith("/h/hello001.wav")
     assert rejected == {"no_entry": 0, "no_definition": 0, "no_pronunciation": 0}

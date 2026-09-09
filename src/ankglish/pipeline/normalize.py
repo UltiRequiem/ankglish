@@ -99,7 +99,10 @@ def normalize_entries(
                     "Definition": escape(definition),
                     "AudioURL": audio_url,
                     "PartOfSpeech": escape(_plain(record.get("fl", "unknown"))),
-                    "Examples": "<br>".join(escape(example) for example in examples),
+                    "Examples": "".join(
+                        f'<div class="ankglish-example-item"><span class="ankglish-bullet">&#8226;</span>{escape(example)}</div>'
+                        for example in examples
+                    ),
                     "Example": escape(examples[0]) if examples else "",
                 },
             )

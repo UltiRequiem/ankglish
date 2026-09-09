@@ -4,6 +4,8 @@
   --paper: #f7f3ea;
   --accent: #d85c3f;
   --line: #d9d0c2;
+  --example: #394653;
+  --example-muted: #687582;
   --serif: Georgia, "Times New Roman", serif;
   --sans: "Avenir Next", Avenir, "Helvetica Neue", sans-serif;
 }
@@ -73,12 +75,27 @@
 
 .ankglish-example,
 .ankglish-examples {
-  border-left: 3px solid var(--accent);
-  color: #394653;
+  color: var(--example);
   font-family: var(--serif);
   font-size: 1rem;
   line-height: 1.55;
-  padding-left: 0.8rem;
+  padding-left: 0.2rem;
+}
+
+.ankglish-example-item {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.45rem;
+  margin: 0.8rem 0;
+}
+.ankglish-example-item:first-child {
+  margin-top: 0;
+}
+.ankglish-example-item:last-child {
+  margin-bottom: 0;
+}
+.ankglish-example-item em {
+  color: var(--accent);
 }
 
 .ankglish-definition {
@@ -113,6 +130,10 @@
   margin-top: 1.5rem;
   padding: 0.6rem 0.8rem;
 }
+.ankglish-translation {
+  color: var(--example);
+  line-height: 1.55;
+}
 .ankglish-dictionary {
   color: var(--accent);
   display: inline-block;
@@ -125,5 +146,32 @@
     --muted: #b8b0a4;
     --paper: #202a31;
     --line: #46515a;
+    --example: #edf2f4;
+    --example-muted: #b8c4ca;
+    --accent: #ff9077;
   }
+}
+
+/* Anki uses nightMode/night_mode classes instead of the browser preference. */
+.nightMode .card,
+.night_mode .card,
+body.nightMode .card,
+body.night_mode .card {
+  --ink: #f5f7f8;
+  --muted: #c4cdd2;
+  --paper: #292d30;
+  --line: #596269;
+  --example: #f0f4f5;
+  --accent: #ff8f78;
+}
+
+.nightMode .ankglish-example,
+.nightMode .ankglish-examples,
+.night_mode .ankglish-example,
+.night_mode .ankglish-examples,
+body.nightMode .ankglish-example,
+body.nightMode .ankglish-examples,
+body.night_mode .ankglish-example,
+body.night_mode .ankglish-examples {
+  color: #f0f4f5;
 }
