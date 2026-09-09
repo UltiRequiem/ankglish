@@ -1,5 +1,5 @@
-from pathlib import Path
 import time
+from pathlib import Path
 
 from ankglish.sources.fetch import fetch_audio_many, fetch_mwld
 
@@ -34,6 +34,7 @@ def test_fetch_preserves_input_order_with_parallel_workers(tmp_path: Path) -> No
 
     assert list(entries) == ["one", "two", "three"]
     assert failures == {}
+
 
 def test_fetch_audio_many_dedupes_and_reports_progress(tmp_path: Path) -> None:
     for name in ("a000001.wav", "b000001.wav"):

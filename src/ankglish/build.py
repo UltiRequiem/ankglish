@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from pathlib import Path
 import time
+from pathlib import Path
 
 from .config import load_config
 from .exporters.apkg import export_apkg
@@ -80,7 +80,12 @@ def rebuild_live(
     started_at = time.monotonic()
 
     def report(index: int, total: int, word: str, source: str) -> None:
-        if index == 1 or index % 100 == 0 or index == total or source.startswith("failed"):
+        if (
+            index == 1
+            or index % 100 == 0
+            or index == total
+            or source.startswith("failed")
+        ):
             elapsed = time.monotonic() - started_at
             rate = index / elapsed if elapsed else 0
             remaining = (total - index) / rate if rate else 0
@@ -116,7 +121,9 @@ def rebuild_live(
         raise ValueError(f"offline cache is missing {len(failures)} required words")
 
     stage_started = time.monotonic()
-    full_notes, normalization_rejections = normalize_entries(entries, frequency_ranks=ranks)
+    full_notes, normalization_rejections = normalize_entries(
+        entries, frequency_ranks=ranks
+    )
     full_notes, quality_rejections = quality_filter(full_notes)
     print(
         f"Normalized {len(full_notes)} notes in {time.monotonic() - stage_started:.1f}s",

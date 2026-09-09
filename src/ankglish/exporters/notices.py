@@ -58,7 +58,9 @@ def build_attribution(manifest: Mapping[str, object]) -> str:
 
     mwld_used = _active(manifest, "fetched_count")
     wiktionary_used = _active(manifest, "wiktionary_count")
-    audio_used = _active(manifest, "audio_count") or _active(manifest, "audio_url_count")
+    audio_used = _active(manifest, "audio_count") or _active(
+        manifest, "audio_url_count"
+    )
 
     return "\n".join(
         [

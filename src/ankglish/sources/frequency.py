@@ -21,7 +21,9 @@ def english_words(max_rank: int = 60000) -> list[FrequencyWord]:
         if not word.isalpha() or word.lower() != word:
             continue
         words.append(
-            FrequencyWord(word=word, rank=len(words) + 1, score=zipf_frequency(word, "en"))
+            FrequencyWord(
+                word=word, rank=len(words) + 1, score=zipf_frequency(word, "en")
+            )
         )
         if len(words) >= max_rank:
             break

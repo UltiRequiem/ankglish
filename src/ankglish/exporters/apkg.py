@@ -8,7 +8,6 @@ import genanki
 
 from ..models import DeckNote
 
-
 MODEL_ID = 1_701_001
 DECK_IDS = {"full": 1_701_101, "standard": 1_701_102}
 
@@ -49,7 +48,9 @@ def export_apkg(
         ],
         css=_template("styles.css"),
     )
-    deck = genanki.Deck(DECK_IDS[variant], f"ankglish::{variant}", description=description)
+    deck = genanki.Deck(
+        DECK_IDS[variant], f"ankglish::{variant}", description=description
+    )
     media_files: list[str] = []
     for deck_note in notes:
         note = genanki.Note(
@@ -61,7 +62,10 @@ def export_apkg(
                 deck_note.fields.get("Definition", deck_note.sense.definition),
                 deck_note.fields.get("Examples", "<br>".join(deck_note.sense.examples)),
                 deck_note.fields.get("Translation", ""),
-                deck_note.fields.get("Example", deck_note.sense.examples[0] if deck_note.sense.examples else ""),
+                deck_note.fields.get(
+                    "Example",
+                    deck_note.sense.examples[0] if deck_note.sense.examples else "",
+                ),
                 deck_note.fields.get("Audio", ""),
                 _template("card.js"),
             ],

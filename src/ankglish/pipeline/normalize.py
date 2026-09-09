@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from html import escape
 import re
+from html import escape
 
 from ..models import DeckNote, Provenance, Sense, stable_note_id
 
@@ -48,7 +48,11 @@ def normalize_entries(
         headword = _plain(record.get("hwi", {}).get("hw", word)).replace("*", "")
         pronunciations = record.get("hwi", {}).get("prs", [])
         pronunciation = next(
-            (item for item in pronunciations if isinstance(item, dict) and item.get("ipa")),
+            (
+                item
+                for item in pronunciations
+                if isinstance(item, dict) and item.get("ipa")
+            ),
             None,
         )
         if pronunciation is None:

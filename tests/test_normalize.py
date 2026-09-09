@@ -13,10 +13,14 @@ def test_normalize_mwld_short_definitions() -> None:
                     },
                     "fl": "interjection",
                     "shortdef": ["used as a greeting"],
-                    "def": [[[
-                        "sense",
-                        {"dt": [["vis", [{"t": "Hello there."}]]]},
-                    ]]],
+                    "def": [
+                        [
+                            [
+                                "sense",
+                                {"dt": [["vis", [{"t": "Hello there."}]]]},
+                            ]
+                        ]
+                    ],
                 }
             ]
         },

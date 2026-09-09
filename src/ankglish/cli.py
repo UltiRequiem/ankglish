@@ -28,13 +28,19 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Input note file to inspect (default: tests/fixtures/notes.tsv).",
     )
 
-    build = subparsers.add_parser("build", help="Build deterministic offline TSV output.")
+    build = subparsers.add_parser(
+        "build", help="Build deterministic offline TSV output."
+    )
     build.add_argument("--input", type=Path, default=Path("tests/fixtures/notes.tsv"))
     build.add_argument("--config", type=Path, default=Path("config/default.toml"))
     build.add_argument("--output-dir", type=Path, default=Path("dist"))
-    build.add_argument("--variant", choices=("full", "standard", "both"), default="both")
+    build.add_argument(
+        "--variant", choices=("full", "standard", "both"), default="both"
+    )
 
-    rebuild = subparsers.add_parser("rebuild", help="Fetch, normalize, quality-check, and export APKG.")
+    rebuild = subparsers.add_parser(
+        "rebuild", help="Fetch, normalize, quality-check, and export APKG."
+    )
     rebuild.add_argument("--config", type=Path, default=Path("config/default.toml"))
     rebuild.add_argument("--output-dir", type=Path, default=Path("dist"))
     rebuild.add_argument("--cache-dir", type=Path, default=Path("data/cache/mwld"))
@@ -46,7 +52,9 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Re-download cached pronunciation audio (URLs are stable; rarely needed).",
     )
     rebuild.add_argument("--offline", action="store_true")
-    rebuild.add_argument("--concurrency", type=int, help="Maximum parallel dictionary requests.")
+    rebuild.add_argument(
+        "--concurrency", type=int, help="Maximum parallel dictionary requests."
+    )
     rebuild.add_argument(
         "--audio-concurrency",
         type=int,

@@ -82,6 +82,14 @@ def stable_note_id(
     """Return the deterministic ID for one semantic sense card."""
 
     semantic_key = "\x1f".join(
-        (schema, variant, provider, entry_id, sense_id, headword.casefold(), part_of_speech)
+        (
+            schema,
+            variant,
+            provider,
+            entry_id,
+            sense_id,
+            headword.casefold(),
+            part_of_speech,
+        )
     )
     return sha256(semantic_key.encode("utf-8")).hexdigest()

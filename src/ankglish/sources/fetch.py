@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import json
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 import re
 import time
 from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 import httpx
 
@@ -34,7 +34,9 @@ def fetch_mwld(
     cache_dir.mkdir(parents=True, exist_ok=True)
     total = len(words)
 
-    def fetch_one(word: str) -> tuple[str, list[dict[str, object]] | None, str, str | None]:
+    def fetch_one(
+        word: str,
+    ) -> tuple[str, list[dict[str, object]] | None, str, str | None]:
         path = cache_dir / f"{_safe_name(word)}.json"
         source = "cache"
         try:
@@ -45,7 +47,9 @@ def fetch_mwld(
             else:
                 source = "network"
                 payload = client.fetch(word)
-                path.write_text(json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8")
+                path.write_text(
+                    json.dumps(payload, sort_keys=True) + "\n", encoding="utf-8"
+                )
                 if delay_seconds:
                     time.sleep(delay_seconds)
             return word, payload, source, None
