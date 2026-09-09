@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ankglish"
+version = "0.1.0"
+description = "Reproducible build pipeline for English pronunciation Anki decks"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Eliaz Bobadilla" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+ankglish = "ankglish.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ankglish"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

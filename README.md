@@ -1,0 +1,189 @@
+# ankglish
+
+English pronunciation and vocabulary Anki deck by Eliaz Bobadilla.
+
+The former generated deck snapshot has been removed. New releases will be
+created only from pinned inputs and the reproducible build pipeline.
+
+This project is being rebuilt as a reproducible Python pipeline for English
+pronunciation and vocabulary Anki decks. The exact frequency list and source
+versions are still unresolved; the legacy `60k` label must not be read as a
+verified frequency source.
+
+<div align="center">
+
+[![AnkiWeb - Alt](https://img.shields.io/badge/AnkiWeb-Alt-2e6ce6?labelColor=0b3d91&style=for-the-badge&logo=anki&logoColor=white)](https://ankiweb.net/shared/info/365554322)
+
+</div>
+
+---
+
+## 📌 Overview
+
+- **Vocabulary**: determined by a pinned frequency source once selected.
+
+- **Dictionary & Audio**:
+  [Merriam-Webster's Learner's Dictionary](https://dictionaryapi.com/) (with
+  native audio pronunciations)
+
+  - Supplementary: [Wiktionary (via Kaikki.org)](https://kaikki.org/) used to
+    fill gaps.
+
+- **Card Structure**: Fully atomic—each card corresponds to exactly one
+  definition.
+
+- **Total Cards**: \~66,000
+
+- **Organization**: Words divided into 20 frequency-based sub-decks, from most
+  frequent (01k) to least frequent (60k).
+
+- **Exclusions**: Words or definitions not available in Merriam-Webster's
+  Learner's Dictionary have been omitted to ensure accuracy and consistency.
+
+---
+
+## 🔖 Card Features
+
+- **Clean & Focused Design**
+
+  ![Card Preview](https://pub-90b0b2afa26447b8b824c3d05d8e274f.r2.dev/uPic/20260319vgLPzn.png)
+
+- **Audio Pronunciations**
+
+  - Official pronunciations provided directly from Merriam-Webster.
+
+  - Missing audio files have been filled using recordings from Wiktionary
+    (En-US).
+
+- **Translations**
+
+  Disabled by default. A future build may include a user-selected translation
+  file or explicitly configured provider with language and attribution metadata.
+
+- **Example Sentence TTS**
+
+  Click the ▶️ icon to hear example sentences synthesized via online TTS.
+
+- **Random Front Example**
+
+  The front side displays one randomly selected example sentence from the
+  available examples for the current card.
+
+- **Instant Dictionary Access**
+
+  Click the Merriam-Webster logo (top-right corner) to instantly look up the
+  word online.
+
+---
+
+## 📁 Planned Deck Structure
+
+```
+ankglish
+ ├── full
+ └── standard
+```
+
+The frequency source and release subdeck policy will be pinned before the
+first production build.
+
+---
+
+## ⚛️ About Atomic Cards
+
+- Cards are ordered by **word frequency**, but each definition is split into its
+  own **atomic card**.
+
+  As a result, high-frequency words may surface multiple cards early, including
+  less common meanings.
+
+- To make this easier to manage, words with two or more definition cards are
+  labeled with sense-priority tags: `core`, `extend`, and `rare`, so you can
+  focus on the most useful meanings first.
+
+- If a card is not relevant to your goals, feel free to **suspend** or
+  **delete** it.
+
+---
+
+## 🛠 How to Use
+
+The build CLI is currently being established. The initial validation command
+checks the small offline fixture:
+
+```sh
+uv run ankglish validate
+```
+
+See [SOURCES.md](SOURCES.md) for the current source inventory and unresolved
+provider decisions. Release builds will document pinned inputs, cache policy,
+quality reports, and import instructions here.
+
+- Download and install [Anki](https://apps.ankiweb.net/).
+
+- Import the deck `.apkg` file.
+
+- Start reviewing from the highest frequency sub-deck for maximum efficiency.
+
+- If you prefer translations in languages other than Simplified Chinese, you can
+  edit the `ExampleTR*` fields accordingly.
+
+---
+
+## 📜 Licensing & Third-Party Content Notice
+
+This repository and deck contain materials governed by different terms; no
+single license applies to the whole project. See the full [LICENSE](LICENSE) for
+scope and reuse conditions.
+
+- **Original materials by Eliaz Bobadilla:** To the extent that Eliaz Bobadilla
+  owns the relevant rights, original documentation, translations, selection and organization, card
+  design, templates, code, and other original contributions are dedicated to the
+  public domain under
+  [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/). This
+  does not include third-party material or rights that Eliaz Bobadilla does not own.
+
+- **Wiktionary text and Kaikki.org structured data:** Derived text and data are
+  redistributed under
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), with
+  attribution to English Wiktionary contributors and Kaikki.org. The data has
+  been filtered, reorganized, and formatted for this deck. Reuse must preserve
+  attribution, indicate changes, link the license, and follow its ShareAlike
+  requirements.
+
+- **Wiktionary/Wikimedia audio and other media:** Each file retains the
+  file-specific license and attribution requirements shown on its original
+  source page. These files are not automatically covered by CC BY-SA 4.0 or CC0;
+  verify each file before reuse.
+
+- **Merriam-Webster:** Definitions, examples, pronunciation data, audio, logos,
+  product names, and trademarks are © Merriam-Webster, Incorporated and/or its
+  licensors. They are excluded from CC0 and CC BY-SA 4.0, and this repository
+  grants no rights to them. Downloading the repository or deck does not itself
+  grant permission to redistribute or commercially use that material. Any use
+  must independently comply with the
+  [Dictionary API Terms of Service](https://dictionaryapi.com/info/terms-of-service),
+  [Brand Guidelines](https://dictionaryapi.com/info/branding-guidelines),
+  applicable law, and any separate written permission that may be required.
+
+---
+
+## 🙌 Acknowledgments
+
+Special thanks to:
+
+- [Merriam-Webster's Learner's Dictionary](https://dictionaryapi.com/)
+
+- [Kaikki.org](https://kaikki.org/) - Wiktionary data extract used for
+  supplementary IPA and audio
+
+- `@KarasawaKoko` - for providing the TTS audio server.
+
+- [Ecattea/COCA-English-Anki-Deck](https://github.com/Ecattea/COCA-English-Anki-Deck) -
+  for structural and workflow inspiration.
+
+- `@mefengl` - For supplementing missing IPA and audio.
+
+---
+
+**Happy learning! 📚**

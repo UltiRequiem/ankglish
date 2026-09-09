@@ -1,0 +1,18 @@
+[project]
+name = "ankglish"
+schema = "deck-note-v1"
+
+[sources.frequency]
+provider = "unresolved"
+version = "unresolved"
+
+[sources.dictionary]
+provider = "merriam-webster-learner"
+fallback = "kaikki-wiktionary"
+
+[translations]
+enabled = false
+
+[audio]
+package_headword_audio = true
+example_tts_enabled = false

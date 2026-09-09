@@ -1,0 +1,13 @@
+*.pyc
+.DS_Store
+*.proto
+/anki
+requirements.txt
+*.apkg
+/__pycache__
+/mwld
+/assets
+/data/
+/dist/
+.venv/
+.pytest_cache/
