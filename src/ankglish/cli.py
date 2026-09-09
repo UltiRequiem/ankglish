@@ -72,16 +72,22 @@ def _build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = _build_parser().parse_args(argv)
+
     if args.command == "validate":
         errors = validate_tsv(args.input)
+
         if errors:
             for error in errors:
                 print(error)
             return 1
+
         print(f"Found input: {args.input}")
+
         return 0
+
     if args.command == "build":
         variants = ("full", "standard") if args.variant == "both" else (args.variant,)
+        
         try:
             outputs = build_tsv(
                 input_path=args.input,
@@ -92,10 +98,12 @@ def main(argv: list[str] | None = None) -> int:
         except (OSError, ValueError, KeyError) as error:
             print(f"Build failed: {error}")
             return 1
+        
         for output in outputs:
             print(f"Wrote {output}")
         print(f"Wrote {args.output_dir / 'manifest.json'}")
         return 0
+    
     if args.command == "rebuild":
         if args.refresh and args.offline:
             print("Build failed: --refresh and --offline are mutually exclusive")
