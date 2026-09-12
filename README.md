@@ -1,5 +1,7 @@
 # ankglish
 
+![ankglish logo](media/logo.png)
+
 Build a stronger English vocabulary through pronunciation, definitions, and real
 example sentences in Anki.
 
