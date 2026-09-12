@@ -87,7 +87,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "build":
         variants = ("full", "standard") if args.variant == "both" else (args.variant,)
-        
+
         try:
             outputs = build_tsv(
                 input_path=args.input,
@@ -98,12 +98,12 @@ def main(argv: list[str] | None = None) -> int:
         except (OSError, ValueError, KeyError) as error:
             print(f"Build failed: {error}")
             return 1
-        
+
         for output in outputs:
             print(f"Wrote {output}")
         print(f"Wrote {args.output_dir / 'manifest.json'}")
         return 0
-    
+
     if args.command == "rebuild":
         if args.refresh and args.offline:
             print("Build failed: --refresh and --offline are mutually exclusive")
