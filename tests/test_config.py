@@ -11,6 +11,7 @@ def test_load_default_config(monkeypatch) -> None:
     )
 
     assert config.project_name == "ankglish"
+    assert config.target_language == "en"
     assert config.translations_enabled is False
     assert config.example_tts_enabled is False
     assert config.learner_api_key is None

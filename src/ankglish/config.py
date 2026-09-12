@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 class BuildConfig:
     project_name: str
     schema: str
+    target_language: str
     frequency_provider: str
     frequency_version: str
     dictionary_provider: str
@@ -51,6 +52,7 @@ def load_config(path: Path, *, dotenv_path: Path | None = None) -> BuildConfig:
     return BuildConfig(
         project_name=project["name"],
         schema=project["schema"],
+        target_language=project.get("language", "en"),
         frequency_provider=frequency["provider"],
         frequency_version=frequency["version"],
         dictionary_provider=dictionary["provider"],

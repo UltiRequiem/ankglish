@@ -10,11 +10,9 @@ from pathlib import Path
 from .config import load_config
 from .exporters.apkg import export_apkg
 from .exporters.notices import build_attribution, deck_description
-from .pipeline.normalize import normalize_entries
+from .languages import resolve_language
 from .pipeline.quality import quality_filter
 from .sources.fetch import fetch_audio_many, fetch_mwld
-from .sources.frequency import english_words
-from .sources.mwld import MWLDClient
 from .validation import validate_tsv
 
 
@@ -72,10 +70,11 @@ def rebuild_live(
     if media not in {"embed", "link", "both"}:
         raise ValueError("media must be one of: embed, link, both")
     config = load_config(config_path)
+    language = resolve_language(config.target_language)
     rank_limit = max_rank or config.frequency_max_rank
-    frequency = english_words(rank_limit)
+    frequency = language.frequency(rank_limit)
     words = [item.word for item in frequency]
-    client = MWLDClient(config.learner_api_key)
+    client = language.build_dictionary_client(config)
 
     started_at = time.monotonic()
 
@@ -121,7 +120,7 @@ def rebuild_live(
         raise ValueError(f"offline cache is missing {len(failures)} required words")
 
     stage_started = time.monotonic()
-    full_notes, normalization_rejections = normalize_entries(
+    full_notes, normalization_rejections = language.normalize(
         entries, frequency_ranks=ranks
     )
     full_notes, quality_rejections = quality_filter(full_notes)

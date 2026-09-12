@@ -14,6 +14,12 @@ src/ankglish/
 ├── config.py             loads config/default.toml + .env into BuildConfig
 ├── models.py             shared dataclasses + stable_note_id()
 ├── validation.py         sanity checks for the offline TSV fixture path
+├── languages/
+│   ├── base.py            LanguageProfile contract (frequency, dictionary
+│   │                      client, normalize) the generic pipeline depends on
+│   ├── english.py         ENGLISH profile: wires wordfreq + MWLD + normalize
+│   └── __init__.py        resolve_language(code) — the only place that knows
+│                          which language codes exist
 ├── sources/
 │   ├── frequency.py       wordfreq -> ranked English word list
 │   ├── mwld.py            Merriam-Webster Learner's Dictionary HTTP client
@@ -43,6 +49,21 @@ HTML/CSS/JS, not Python.
 
 See [pipeline.md](pipeline.md) for the `rebuild` walkthrough and
 [cli.md](cli.md) for flags on both.
+
+## Language is explicit, English is the only one implemented
+
+`build.py` never imports `wordfreq`, MWLD, or `normalize_entries` directly. It
+calls `resolve_language(config.target_language)` (`languages/__init__.py`) to
+get a `LanguageProfile` — a small bundle of `frequency`,
+`build_dictionary_client`, and `normalize` callables — and drives the pipeline
+through that. `config/default.toml`'s `[project].language` (default `"en"`)
+selects it; `languages/english.py` is where the English-specific providers
+(wordfreq's `"en"` list, `MWLDClient`, MWLD normalization) actually get composed
+together.
+
+This exists so a second language would be a new `languages/<code>.py` module
+plus an entry in `resolve_language`'s table, not changes to `build.py`. No
+second language is implemented today — only `"en"` resolves.
 
 ## Design decisions worth knowing
 

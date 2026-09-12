@@ -9,13 +9,16 @@ offline-only smoke-test path.
 config/default.toml + .env
         │
         ▼
- 1. frequency ranking ──────────── sources/frequency.py (wordfreq)
+ 0. resolve language ───────────── languages/__init__.py (resolve_language)
+        │  config.target_language ("en") → LanguageProfile
+        ▼
+ 1. frequency ranking ──────────── language.frequency() → sources/frequency.py (wordfreq)
         │  word list, capped at max_rank
         ▼
- 2. dictionary fetch ───────────── sources/fetch.py + sources/mwld.py
+ 2. dictionary fetch ───────────── language.build_dictionary_client() → sources/fetch.py + sources/mwld.py
         │  per-word JSON, cache-first, thread-pooled
         ▼
- 3. normalize ──────────────────── pipeline/normalize.py
+ 3. normalize ──────────────────── language.normalize() → pipeline/normalize.py
         │  raw MWLD JSON → one DeckNote per sense
         ▼
  4. quality filter ─────────────── pipeline/quality.py
@@ -34,6 +37,17 @@ config/default.toml + .env
 ```
 
 ## Step by step
+
+### 0. Resolve language
+
+`rebuild_live` calls `resolve_language(config.target_language)`
+([`languages/__init__.py`](../src/ankglish/languages/__init__.py)) to get a
+`LanguageProfile`, then drives every later stage through it
+(`language.frequency`, `language.build_dictionary_client`, `language.normalize`)
+instead of importing English/MWLD modules directly. Today
+`config.target_language` is always `"en"`, resolving to
+[`languages/english.py`](../src/ankglish/languages/english.py)'s `ENGLISH`
+profile — the only one registered.
 
 ### 1. Frequency ranking
 

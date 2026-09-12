@@ -1,11 +1,11 @@
 [project]
 name = "ankglish"
 schema = "deck-note-v1"
+language = "en"
 
 [sources.frequency]
 provider = "wordfreq"
 version = "pinned-in-lockfile"
-language = "en"
 max_rank = 60000
 
 [sources.dictionary]

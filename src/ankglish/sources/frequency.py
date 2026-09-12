@@ -1,4 +1,4 @@
-"""Deterministic English frequency ranking backed by the pinned wordfreq package."""
+"""Deterministic frequency ranking backed by the pinned wordfreq package."""
 
 from __future__ import annotations
 
@@ -15,16 +15,24 @@ class FrequencyWord:
     source: str = "wordfreq"
 
 
-def english_words(max_rank: int = 60000) -> list[FrequencyWord]:
+def frequency_words(language_code: str, max_rank: int = 60000) -> list[FrequencyWord]:
     words: list[FrequencyWord] = []
-    for word in iter_wordlist("en"):
+    for word in iter_wordlist(language_code):
         if not word.isalpha() or word.lower() != word:
             continue
         words.append(
             FrequencyWord(
-                word=word, rank=len(words) + 1, score=zipf_frequency(word, "en")
+                word=word,
+                rank=len(words) + 1,
+                score=zipf_frequency(word, language_code),
             )
         )
         if len(words) >= max_rank:
             break
     return words
+
+
+def english_words(max_rank: int = 60000) -> list[FrequencyWord]:
+    """Backward-compatible English convenience wrapper around `frequency_words`."""
+
+    return frequency_words("en", max_rank)
