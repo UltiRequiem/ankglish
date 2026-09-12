@@ -64,3 +64,9 @@ Frequency ranking uses the `wordfreq` dataset. Definitions, pronunciation
 information, and audio primarily come from Merriam-Webster's Learner's
 Dictionary, with Wiktionary/Kaikki used where permitted as a fallback. See
 [SOURCES.md](SOURCES.md) and [LICENSE](LICENSE) for attribution and reuse terms.
+
+## Building the deck yourself
+
+See [docs/](docs/) for how the build pipeline works:
+[architecture](docs/architecture.md), [pipeline walkthrough](docs/pipeline.md),
+[CLI reference](docs/cli.md), and [data model](docs/data-model.md).
