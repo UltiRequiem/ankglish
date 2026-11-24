@@ -70,3 +70,6 @@ Dictionary, with Wiktionary/Kaikki used where permitted as a fallback. See
 See [docs/](docs/) for how the build pipeline works:
 [architecture](docs/architecture.md), [pipeline walkthrough](docs/pipeline.md),
 [CLI reference](docs/cli.md), and [data model](docs/data-model.md).
+
+
+https://github.com/user-attachments/assets/e6938f1f-d4e8-455a-ad4a-5721d29a9d9a
